@@ -1,3 +1,5 @@
+package br.com.montech;
+
 public class LogsFluxo {
     public static void main (String[] args){
         // lógica princial: login -> dashboard -> monitoramento dos servidores (SPA, SDV, AIS) ->
