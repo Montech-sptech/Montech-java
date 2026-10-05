@@ -1,6 +1,5 @@
 package com.montech.dto;
 
-// DTO: representa como objeto Java o JSON { "fields": { ... } } enviado ao criar uma issue
 public class IssueRequestDto {
 
     private IssueFieldsDto fields;

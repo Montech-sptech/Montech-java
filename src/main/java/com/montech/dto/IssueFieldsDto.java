@@ -1,14 +1,15 @@
 package com.montech.dto;
 
-// DTO: representa como objeto Java o JSON { "project": {...}, "summary": "...", "issuetype": {...} }
 public class IssueFieldsDto {
 
     private ProjectDto project;
     private String summary;
+
     private IssueTypeDto issuetype;
 
-    public IssueFieldsDto() {
-    }
+    private Object description;
+    private PriorityDto priority;
+    private String duedate;
 
     public IssueFieldsDto(ProjectDto project, String summary, IssueTypeDto issuetype) {
         this.project = project;
@@ -38,5 +39,29 @@ public class IssueFieldsDto {
 
     public void setIssuetype(IssueTypeDto issuetype) {
         this.issuetype = issuetype;
+    }
+
+    public Object getDescription() {
+        return description;
+    }
+
+    public void setDescription(Object description) {
+        this.description = description;
+    }
+
+    public PriorityDto getPriority() {
+        return priority;
+    }
+
+    public void setPriority(PriorityDto priority) {
+        this.priority = priority;
+    }
+
+    public String getDuedate() {
+        return duedate;
+    }
+
+    public void setDuedate(String duedate) {
+        this.duedate = duedate;
     }
 }

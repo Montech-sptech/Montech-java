@@ -20,11 +20,13 @@ public class OpenTicket {
         Jira jira = new Jira(baseUrl, email, apiToken);
 
         try {
-            // Cria uma issue no backlog do projeto informado
             String response = jira.createIssue(
-                  "LOGS", // Key do projeto, presente na URL do seu site
-                  "Ticket criada via Java Montech", // Nome da issue
-                  "Bug" // Tipo da issue: "Task", "Bug", "Story", etc.
+                    "LOGS",
+                    "Ticket criada via Java Montech validado",
+                    "Bug",
+                    "Erro ao processar o lote 123.",
+                    "High",
+                    "2026-10-05"
             );
 
             // Exibe o JSON de resposta com os dados da issue criada

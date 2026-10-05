@@ -1,13 +1,9 @@
 package com.montech.dto;
 
-public class IssueTypeDto {
-
+public class PriorityDto {
     private String name;
 
-    public IssueTypeDto() {
-    }
-
-    public IssueTypeDto(String name) {
+    public PriorityDto(String name) {
         this.name = name;
     }
 

@@ -1,6 +1,5 @@
 package com.montech.dto;
 
-// DTO: representa como objeto Java o JSON { "key": "..." } do projeto do Jira
 public class ProjectDto {
 
     private String key;

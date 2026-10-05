@@ -8,11 +8,13 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Base64;
-import com.montech.dto.IssueFieldsDto;
-import com.montech.dto.IssueRequestDto;
-import com.montech.dto.IssueTypeDto;
-import com.montech.dto.ProjectDto;
+import java.util.List;
+import java.util.Map;
+
+import com.montech.dto.*;
 
 public class Jira {
 
@@ -34,14 +36,47 @@ public class Jira {
         this.objectMapper = new ObjectMapper();
     }
 
-    public String createIssue(String projectKey, String summary, String issueType)
+//   ADF (Atlassian Document Format)
+    private Map<String, Object> toAdf(String text) {
+        return Map.of(
+                "type", "doc",
+                "version", 1,
+                "content", List.of(Map.of(
+                        "type", "paragraph",
+                        "content", List.of(Map.of("type", "text", "text", text))
+                ))
+        );
+    }
+
+    private void validateDate(String date) {
+        try {
+            LocalDate.parse(date); //
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException(
+                    "duedate deve estar no formato yyyy-MM-dd, recebido: " + date, e);
+        }
+    }
+
+    public String createIssue(String projectKey, String summary, String issueType,
+                              String description, String name, String duedate)
           throws IOException, InterruptedException {
         // Monta o corpo da requisição usando os DTOs
         ProjectDto project = new ProjectDto(projectKey);
         IssueTypeDto type = new IssueTypeDto(issueType);
         IssueFieldsDto fields = new IssueFieldsDto(project, summary, type);
-        IssueRequestDto issueRequest = new IssueRequestDto(fields);
 
+        if (description != null && !description.isBlank()) {
+            fields.setDescription(toAdf(description));
+        }
+        if (name != null && !name.isBlank()) {
+            fields.setPriority(new PriorityDto(name));
+        }
+        if (duedate != null && !duedate.isBlank()) {
+            validateDate(duedate);
+            fields.setDuedate(duedate);
+        }
+
+        IssueRequestDto issueRequest = new IssueRequestDto(fields);
         // Transforma o objeto Java em JSON
         String json = objectMapper.writeValueAsString(issueRequest);
 
