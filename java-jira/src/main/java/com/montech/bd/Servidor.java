@@ -1,4 +1,4 @@
-package com.montech;
+package com.montech.bd;
 
 public class Servidor {
     private Integer idServidor;

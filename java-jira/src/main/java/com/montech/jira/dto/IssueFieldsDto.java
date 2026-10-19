@@ -1,4 +1,7 @@
-package com.montech.dto;
+package com.montech.jira.dto;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class IssueFieldsDto {
 
@@ -11,10 +14,13 @@ public class IssueFieldsDto {
     private PriorityDto priority;
     private String duedate;
 
+    private List<String> labels;
+
     public IssueFieldsDto(ProjectDto project, String summary, IssueTypeDto issuetype) {
         this.project = project;
         this.summary = summary;
         this.issuetype = issuetype;
+        this.labels = new ArrayList<>();
     }
 
     public ProjectDto getProject() {
@@ -63,5 +69,13 @@ public class IssueFieldsDto {
 
     public void setDuedate(String duedate) {
         this.duedate = duedate;
+    }
+
+    public List<String> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(List<String> labels) {
+        this.labels = labels;
     }
 }

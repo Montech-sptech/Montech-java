@@ -1,9 +1,13 @@
-package com.montech.dto;
+package com.montech.jira.dto;
 
-public class PriorityDto {
+public class IssueTypeDto {
+
     private String name;
 
-    public PriorityDto(String name) {
+    public IssueTypeDto() {
+    }
+
+    public IssueTypeDto(String name) {
         this.name = name;
     }
 

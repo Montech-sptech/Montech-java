@@ -1,4 +1,4 @@
-package com.montech.dto;
+package com.montech.jira.dto;
 
 public class IssueRequestDto {
 
