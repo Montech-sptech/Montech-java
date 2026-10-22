@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class MonitorChamados {
+public class MontechLogs {
 
     private static  String BUCKET = "montech-datalake-4281";
     private static  String PROJETO_JIRA = "LOGS";

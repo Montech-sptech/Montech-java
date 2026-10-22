@@ -48,7 +48,7 @@
     </dependencies>
 
     <build>
-        <finalName>openTickets</finalName>
+        <finalName>MontechLogs</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -60,7 +60,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.montech.OpenTicket</mainClass>
+                            <mainClass>com.montech.MontechLogs</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
