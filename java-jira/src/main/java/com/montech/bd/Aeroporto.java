@@ -15,7 +15,7 @@ public class Aeroporto {
     private List<Servidor> servidores;
 
     public Aeroporto() {
-        this.statusAtividade = true; // DEFAULT 1 da tabela
+        this.statusAtividade = true;
     }
 
     public Aeroporto(String nome, String codigoAeroporto, String urlJira,
@@ -73,7 +73,6 @@ public class Aeroporto {
 
     @Override
     public String toString() {
-        // tokenJira omitido de propósito para não vazar credencial em logs
         return "Aeroporto{" +
                 "idAeroporto=" + idAeroporto +
                 ", nome='" + nome + '\'' +

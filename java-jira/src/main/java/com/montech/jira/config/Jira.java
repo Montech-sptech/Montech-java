@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -39,14 +40,14 @@ public class Jira {
 
     // ADF (Atlassian Document Format)
     private Map<String, Object> toAdf(String text) {
-        return Map.of(
-                "type", "doc",
-                "version", 1,
-                "content", List.of(Map.of(
-                        "type", "paragraph",
-                        "content", List.of(Map.of("type", "text", "text", text))
-                ))
-        );
+        List<Map<String, Object>> paragrafos = new ArrayList<>();
+        for (String linha : text.split("\n")) {
+            if (linha.isBlank()) continue;
+            paragrafos.add(Map.of(
+                    "type", "paragraph",
+                    "content", List.of(Map.of("type", "text", "text", linha))));
+        }
+        return Map.of("type", "doc", "version", 1, "content", paragrafos);
     }
 
     private void validateDate(String date) {
@@ -58,20 +59,12 @@ public class Jira {
         }
     }
 
-    // Labels do Jira não aceitam espaço; também evita quebrar o JQL
     private String sanitizeLabel(String label) {
         if (label == null || !label.matches("[A-Za-z0-9_\\-]+")) {
             throw new IllegalArgumentException(
                     "Label inválida (use apenas letras, números, '-' e '_'): " + label);
         }
         return label;
-    }
-
-    // Mantém a assinatura antiga funcionando
-    public String createIssue(String projectKey, String summary, String issueType,
-                              String description, String name, String duedate)
-            throws IOException, InterruptedException {
-        return createIssue(projectKey, summary, issueType, description, name, duedate, null);
     }
 
     public String createIssue(String projectKey, String summary, String issueType,

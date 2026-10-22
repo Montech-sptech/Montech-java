@@ -31,4 +31,39 @@ public class MontechDao {
 
         return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(Aeroporto.class), id);
     }
+
+    public List<ServidorMonitorado> listarServidoresAtivos() {
+        String sql = "SELECT s.idServidor, s.token, s.nomeServidor, s.fkAeroporto, a.fkEmpresa "
+                + "FROM servidor s "
+                + "JOIN aeroporto a ON a.idAeroporto = s.fkAeroporto "
+                + "WHERE s.statusAtividade = 1 AND a.statusAtividade = 1";
+
+        return jdbcTemplate.query(sql, (rs, i) -> new ServidorMonitorado(
+                rs.getInt("idServidor"),
+                rs.getString("token"),
+                rs.getString("nomeServidor"),
+                rs.getInt("fkAeroporto"),
+                rs.getInt("fkEmpresa")));
+    }
+
+    public List<LimiteComponente> listarLimites(Integer idServidor) {
+        String sql = "SELECT c.nomeComponente, c.nomeCodigo, c.unidadeMedida, "
+                + "sc.limiteAtencao, sc.limiteCritico "
+                + "FROM servidorcomponente sc "
+                + "JOIN componente c ON c.idComponente = sc.fkComponente "
+                + "WHERE sc.fkServidor = ?";
+
+        return jdbcTemplate.query(sql, (rs, i) -> {
+            java.math.BigDecimal atencao = rs.getBigDecimal("limiteAtencao");
+            java.math.BigDecimal critico = rs.getBigDecimal("limiteCritico");
+            return new LimiteComponente(
+                    rs.getString("nomeComponente"),
+                    rs.getString("nomeCodigo"),
+                    rs.getString("unidadeMedida"),
+                    atencao == null ? null : atencao.doubleValue(),
+                    critico == null ? null : critico.doubleValue());
+        }, idServidor);
+    }
+
+
 }
