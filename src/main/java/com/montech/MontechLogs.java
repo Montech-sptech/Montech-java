@@ -54,8 +54,7 @@ public class MontechLogs {
         String getLabel() { return label; }
     }
 
-//    private static  long INTERVALO_MS = JANELA_MINUTOS * 60L * 1000L;
-    private static  long INTERVALO_MS = 10000L;
+    private static long INTERVALO_MS = 60000L;
 
     public static void main(String[] args) {
         MontechDao dao = new MontechDao(new ConexaoBanco().getJdbcTemplate());
