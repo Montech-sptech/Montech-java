@@ -6,6 +6,7 @@ import com.montech.bd.*;
 import com.montech.jira.config.Jira;
 import com.montech.s3.S3Provider;
 import com.montech.s3.S3Service;
+import io.github.cdimascio.dotenv.Dotenv;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 
 import java.time.LocalDateTime;
@@ -16,7 +17,9 @@ import java.util.stream.Collectors;
 
 public class MontechLogs {
 
-    private static  String BUCKET = "montech-datalake-4281";
+    private static final Dotenv dotenv = Dotenv.load();
+
+    private static final String BUCKET = dotenv.get("MONTECH_BUCKET");
     private static  String PROJETO_JIRA = "LOGS";
     private static  ZoneId FUSO = ZoneId.of("America/Sao_Paulo");
     private static  Integer JANELA_MINUTOS = 15;
