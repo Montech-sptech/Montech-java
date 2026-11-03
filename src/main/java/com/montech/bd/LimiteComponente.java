@@ -2,14 +2,16 @@ package com.montech.bd;
 
 public class LimiteComponente {
 
+    private Integer idServidorComponente;
     private String nomeComponente;
     private String nomeCodigo;
     private String unidadeMedida;
     private Double limiteAtencao;
     private Double limiteCritico;
 
-    public LimiteComponente(String nomeComponente, String nomeCodigo, String unidadeMedida,
-                            Double limiteAtencao, Double limiteCritico) {
+    public LimiteComponente(Integer idServidorComponente, String nomeComponente, String nomeCodigo,
+                            String unidadeMedida, Double limiteAtencao, Double limiteCritico) {
+        this.idServidorComponente = idServidorComponente;
         this.nomeComponente = nomeComponente;
         this.nomeCodigo = nomeCodigo;
         this.unidadeMedida = unidadeMedida;
@@ -17,6 +19,7 @@ public class LimiteComponente {
         this.limiteCritico = limiteCritico;
     }
 
+    public Integer getIdServidorComponente() { return idServidorComponente; }
     public String getNomeComponente() { return nomeComponente; }
     public String getNomeCodigo() { return nomeCodigo; }
     public String getUnidadeMedida() { return unidadeMedida; }

@@ -1,5 +1,6 @@
 package com.montech.jira.config;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.URI;
@@ -13,8 +14,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.montech.jira.dto.*;
 
@@ -113,20 +116,55 @@ public class Jira {
         throw new RuntimeException("Jira request failed: " + status + " - " + response.body());
     }
 
-    public boolean existeChamadoAberto(String projectKey, String labelServidor, String labelProblema)
+    /** Existe algum chamado ainda não concluído com essa label? */
+    public boolean existeChamadoAberto(String projectKey, String label)
             throws IOException, InterruptedException {
 
         if (projectKey == null || !projectKey.matches("[A-Za-z0-9_]+")) {
             throw new IllegalArgumentException("Chave de projeto inválida: " + projectKey);
         }
-        sanitizeLabel(labelServidor);
-        sanitizeLabel(labelProblema);
+        sanitizeLabel(label);
 
         String jql = String.format(
-                "project = %s AND statusCategory != Done AND labels = \"%s\" AND labels = \"%s\"",
-                projectKey, labelServidor, labelProblema);
+                "project = %s AND statusCategory != Done AND labels = \"%s\"",
+                projectKey, label);
 
-        String url = baseUrl + "/rest/api/3/search/jql?maxResults=1&fields=key&jql="
+        JsonNode resultado = buscarJql(jql, 1);
+        return !resultado.path("issues").isEmpty();
+    }
+
+    /**
+     * Recebe chaves de chamados (ex: LOGS-12) e devolve apenas as que já estão
+     * concluídas (statusCategory = Done) no Jira.
+     */
+    public Set<String> buscarChavesFechadas(List<String> chaves)
+            throws IOException, InterruptedException {
+
+        Set<String> fechadas = new HashSet<>();
+
+        List<String> validas = new ArrayList<>();
+        for (String k : chaves) {
+            if (k != null && k.matches("[A-Za-z0-9_]+-\\d+")) {
+                validas.add(k);
+            }
+        }
+
+        final int tamanhoLote = 50;
+        for (int i = 0; i < validas.size(); i += tamanhoLote) {
+            List<String> lote = validas.subList(i, Math.min(i + tamanhoLote, validas.size()));
+
+            String jql = "key in (" + String.join(",", lote) + ") AND statusCategory = Done";
+            JsonNode resultado = buscarJql(jql, tamanhoLote);
+
+            for (JsonNode issue : resultado.path("issues")) {
+                fechadas.add(issue.path("key").asText());
+            }
+        }
+        return fechadas;
+    }
+
+    private JsonNode buscarJql(String jql, int maxResults) throws IOException, InterruptedException {
+        String url = baseUrl + "/rest/api/3/search/jql?maxResults=" + maxResults + "&fields=key&jql="
                 + URLEncoder.encode(jql, StandardCharsets.UTF_8);
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -144,6 +182,6 @@ public class Jira {
                     + " - " + response.body());
         }
 
-        return !objectMapper.readTree(response.body()).path("issues").isEmpty();
+        return objectMapper.readTree(response.body());
     }
 }
