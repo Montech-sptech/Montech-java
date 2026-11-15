@@ -16,7 +16,7 @@ import java.util.*;
 
 public class MontechLogs {
 
-    private static final Dotenv dotenv = Dotenv.load();
+    private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 
     private static final String BUCKET = dotenv.get("MONTECH_BUCKET");
     private static String PROJETO_JIRA = "LOGS";
