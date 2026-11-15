@@ -1,0 +1,16 @@
+services:
+  montech-logs:
+    build: .
+    container_name: montech-logs
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      AWS_REGION: us-east-1
+      TZ: America/Sao_Paulo
+    networks:
+      - montech-net
+
+networks:
+  montech-net:
+    external: true
