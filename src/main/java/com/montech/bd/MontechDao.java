@@ -71,35 +71,39 @@ public class MontechDao {
     // ---------------------------------------------------------------
 
     /** Registra na tabela chamado o chamado aberto no Jira. */
-    public void inserirChamado(String titulo, String descricao, String statusChamado,
+    public void inserirChamado(String titulo, String descricao, String tipoChamado,
                                String linkJira, LocalDateTime dtInicio, Integer fkServidorComponente) {
-        String sql = "INSERT INTO chamado (titulo, descricao, statusChamado, linkJira, dt_inicio, fkServidorComponente) "
+        String sql = "INSERT INTO chamado (titulo, descricao, tipoChamado, linkJira, dt_inicio, fkServidorComponente) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
 
-        jdbcTemplate.update(sql, titulo, descricao, statusChamado, linkJira, dtInicio, fkServidorComponente);
+        jdbcTemplate.update(sql, titulo, descricao, tipoChamado, linkJira, dtInicio, fkServidorComponente);
     }
 
     /** Já existe chamado sem dt_fim para esse servidorcomponente nessa severidade? */
-    public boolean existeChamadoAberto(Integer fkServidorComponente, String statusChamado) {
+    public boolean existeChamadoAberto(Integer fkServidorComponente, String tipoChamado) {
         String sql = "SELECT COUNT(*) FROM chamado "
-                + "WHERE fkServidorComponente = ? AND statusChamado = ? AND dt_fim IS NULL";
+                + "WHERE fkServidorComponente = ? AND tipoChamado = ? "
+                + "AND statusChamado = 'ABERTO' AND dt_fim IS NULL";
 
-        Integer qtd = jdbcTemplate.queryForObject(sql, Integer.class, fkServidorComponente, statusChamado);
-        return qtd != null && qtd > 0;
+        Integer qtd = jdbcTemplate.queryForObject(sql, Integer.class, fkServidorComponente, tipoChamado);
+        return qtd > 0;
     }
 
     /** Chamados que ainda não têm dt_fim (candidatos a terem sido fechados no Jira). */
     public List<ChamadoAberto> listarChamadosAbertos() {
-        String sql = "SELECT c.idChamado, c.titulo, c.linkJira, s.fkAeroporto "
-                + "FROM chamado c "
-                + "JOIN servidorcomponente sc ON sc.idServidorComponente = c.fkServidorComponente "
-                + "JOIN servidor s ON s.idServidor = sc.fkServidor "
-                + "WHERE c.dt_fim IS NULL";
-
+        String sql = """
+        SELECT c.idChamado, c.titulo, c.linkJira,
+               c.fkServidorComponente, s.fkAeroporto
+        FROM chamado c
+        JOIN servidorcomponente sc ON sc.idServidorComponente = c.fkServidorComponente
+        JOIN servidor s ON s.idServidor = sc.fkServidor
+        WHERE c.statusChamado = 'ABERTO'
+        """;
         return jdbcTemplate.query(sql, (rs, i) -> new ChamadoAberto(
                 rs.getInt("idChamado"),
                 rs.getString("titulo"),
                 rs.getString("linkJira"),
+                rs.getInt("fkServidorComponente"),
                 rs.getInt("fkAeroporto")));
     }
 
